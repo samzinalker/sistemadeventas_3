@@ -1,51 +1,51 @@
 <?php
-include ('../../config.php');
+include ('../app/config.php');
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
 if (!isset($_SESSION['id_usuario'])) {
-    echo "No autenticado";
+    header('Location: ../login.php');
     exit();
 }
 $id_usuario = $_SESSION['id_usuario'];
-$id_producto = $_POST['id_producto'] ?? null;
-
-// Otros campos del producto
-$nombre = $_POST['nombre'] ?? '';
-$descripcion = $_POST['descripcion'] ?? '';
-$stock = $_POST['stock'] ?? 0;
-// ...otros campos según tu formulario...
+$id_producto = $_GET['id_producto'] ?? null;
 
 if ($id_producto) {
-    // Verificar que el producto pertenece al usuario autenticado
-    $sql_check = "SELECT id_producto FROM tb_almacen WHERE id_producto = :id_producto AND id_usuario = :id_usuario";
-    $query_check = $pdo->prepare($sql_check);
-    $query_check->bindParam(':id_producto', $id_producto, PDO::PARAM_INT);
-    $query_check->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
-    $query_check->execute();
-
-    if ($query_check->rowCount() === 1) {
-        // Solo actualizar si el producto es del usuario autenticado
-        $sql = "UPDATE tb_almacen SET nombre = :nombre, descripcion = :descripcion, stock = :stock
-                WHERE id_producto = :id_producto AND id_usuario = :id_usuario";
-        $query = $pdo->prepare($sql);
-        $query->bindParam(':nombre', $nombre, PDO::PARAM_STR);
-        $query->bindParam(':descripcion', $descripcion, PDO::PARAM_STR);
-        $query->bindParam(':stock', $stock, PDO::PARAM_INT);
-        $query->bindParam(':id_producto', $id_producto, PDO::PARAM_INT);
-        $query->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
-
-        if ($query->execute()) {
-            header('Location: ../../../almacen/index.php?mensaje=Producto actualizado correctamente');
-            exit();
-        } else {
-            echo "Error al actualizar el producto";
-        }
-    } else {
-        echo "No autorizado para editar este producto";
+    // Solo obtiene el producto si pertenece al usuario autenticado
+    $sql = "SELECT * FROM tb_almacen WHERE id_producto = :id_producto AND id_usuario = :id_usuario";
+    $query = $pdo->prepare($sql);
+    $query->bindParam(':id_producto', $id_producto, PDO::PARAM_INT);
+    $query->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    $query->execute();
+    $producto = $query->fetch(PDO::FETCH_ASSOC);
+    if (!$producto) {
+        echo "Producto no encontrado o no autorizado.";
+        exit();
     }
 } else {
-    echo "Error: ID de producto no proporcionado";
+    echo "ID de producto no proporcionado.";
+    exit();
 }
 ?>
+
+<div class="container mt-4">
+    <h2>Editar Producto</h2>
+    <form action="../app/controllers/almacen/update.php" method="post">
+        <input type="hidden" name="id_producto" value="<?php echo htmlspecialchars($producto['id_producto']); ?>">
+        <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" name="nombre" class="form-control" value="<?php echo htmlspecialchars($producto['nombre']); ?>" required>
+        </div>
+        <div class="form-group">
+            <label>Descripción</label>
+            <textarea name="descripcion" class="form-control" required><?php echo htmlspecialchars($producto['descripcion']); ?></textarea>
+        </div>
+        <div class="form-group">
+            <label>Stock</label>
+            <input type="number" name="stock" class="form-control" value="<?php echo htmlspecialchars($producto['stock']); ?>" required>
+        </div>
+        <!-- Otros campos según tu modelo -->
+        <button type="submit" class="btn btn-success">Guardar cambios</button>
+        <a href="index.php" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
