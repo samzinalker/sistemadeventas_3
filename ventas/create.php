@@ -1,5 +1,5 @@
 <?php
-require_once(ROOT_PATH . '/app/config.php');
+include ('../app/config.php');
 include ('../layout/sesion.php');
 include('../app/controllers/ventas/vaciar_carrito.php');
 
