@@ -1,6 +1,6 @@
 <?php
 $id_venta_get= $_GET['id_venta'];
-include ('../app/config.php');
+require_once(ROOT_PATH . '/app/config.php');
 include ('../layout/sesion.php');
 
 include ('../layout/parte1.php');
