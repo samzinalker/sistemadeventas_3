@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-05-2025 a las 14:51:16
+-- Tiempo de generación: 08-05-2025 a las 15:49:11
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -91,7 +91,11 @@ INSERT INTO `tb_carrito` (`id_carrito`, `id_usuario`, `nro_venta`, `id_producto`
 (43, 0, 5, 5, 12, '2025-05-03 00:55:22', '0000-00-00 00:00:00'),
 (44, 0, 4, 1, 12, '2025-05-08 06:07:07', '0000-00-00 00:00:00'),
 (45, 0, 4, 1, 12, '2025-05-08 06:07:16', '0000-00-00 00:00:00'),
-(46, 0, 4, 5, 12, '2025-05-08 06:07:49', '0000-00-00 00:00:00');
+(46, 0, 4, 5, 12, '2025-05-08 06:07:49', '0000-00-00 00:00:00'),
+(47, 0, 1, 1, 1, '2025-05-08 08:08:47', '0000-00-00 00:00:00'),
+(48, 0, 2, 1, 1, '2025-05-08 08:17:49', '0000-00-00 00:00:00'),
+(49, 0, 2, 5, 11, '2025-05-08 08:24:24', '0000-00-00 00:00:00'),
+(64, 1, 2, 1, 11, '2025-05-08 08:37:41', '2025-05-08 08:37:41');
 
 -- --------------------------------------------------------
 
@@ -247,10 +251,18 @@ CREATE TABLE `tb_ventas` (
   `id_venta` int(11) NOT NULL,
   `nro_venta` int(11) NOT NULL,
   `id_cliente` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
   `total_pagado` decimal(10,2) NOT NULL,
   `fyh_creacion` datetime NOT NULL,
   `fyh_actualizacion` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `tb_ventas`
+--
+
+INSERT INTO `tb_ventas` (`id_venta`, `nro_venta`, `id_cliente`, `id_usuario`, `total_pagado`, `fyh_creacion`, `fyh_actualizacion`) VALUES
+(44, 4, 1, 1, 150.00, '2025-05-08 14:15:58', '2025-05-08 14:15:58');
 
 --
 -- Índices para tablas volcadas
@@ -318,7 +330,8 @@ ALTER TABLE `tb_usuarios`
 ALTER TABLE `tb_ventas`
   ADD PRIMARY KEY (`id_venta`),
   ADD KEY `id_cliente` (`id_cliente`),
-  ADD KEY `nro_venta` (`nro_venta`);
+  ADD KEY `nro_venta` (`nro_venta`),
+  ADD KEY `fk_tb_ventas_tb_usuarios` (`id_usuario`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -334,7 +347,7 @@ ALTER TABLE `tb_almacen`
 -- AUTO_INCREMENT de la tabla `tb_carrito`
 --
 ALTER TABLE `tb_carrito`
-  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_categorias`
@@ -376,7 +389,7 @@ ALTER TABLE `tb_usuarios`
 -- AUTO_INCREMENT de la tabla `tb_ventas`
 --
 ALTER TABLE `tb_ventas`
-  MODIFY `id_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- Restricciones para tablas volcadas
@@ -413,6 +426,7 @@ ALTER TABLE `tb_usuarios`
 -- Filtros para la tabla `tb_ventas`
 --
 ALTER TABLE `tb_ventas`
+  ADD CONSTRAINT `fk_tb_ventas_tb_usuarios` FOREIGN KEY (`id_usuario`) REFERENCES `tb_usuarios` (`id_usuario`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `tb_ventas_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `tb_clientes` (`id_cliente`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `tb_ventas_ibfk_2` FOREIGN KEY (`nro_venta`) REFERENCES `tb_carrito` (`nro_venta`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
