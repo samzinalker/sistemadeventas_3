@@ -3,7 +3,6 @@ include ('../app/config.php');
 include ('../layout/sesion.php');
 
 include ('../layout/parte1.php');
-
 include ('../app/controllers/categorias/listado_de_categoria.php');
 include ('../app/controllers/almacen/cargar_producto.php');
 
